@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+</head>
+<body style="text-align:center;">
+<div id="app">
+  <svg ref="svg" height="600" width="1300">
+   <path
+     v-for="(state, index) in stateData"
+     :d="pathGenerator(state.feature)"
+     :style="{
+       fill: state.color,
+       stroke: 'darkslategray'
+     }" @mouseover="updateDetails(index)"></path>
+ </svg>
+</div>
+
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.2/axios.min.js"></script>
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fetch/3.0.0/fetch.min.js.map"></script>
+
+    <script src="sample.js"></script>
+
+    </body>
+    </html>
