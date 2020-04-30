@@ -64,80 +64,6 @@ var app = new Vue({
 
 ]
 },
-  /*  happiestCities: [
-      {"city":"Plano, TX","rank":1,"lat":"33.05","lng":"-96.75"},
-      {"city":"Irvine, CA","rank":2,"lat":"33.68","lng":"-117.77"},
-      {"city":"Madison, WI","rank":3,"lat":"43.09","lng":"-89.43"},
-      {"city":"Fremont, CA","rank":4,"lat":"37.50","lng":"-122.08"},
-      {"city":"Huntington Beach, CA","rank":5,"lat":"33.69","lng":"-118.01"},
-      {"city":"Fargo, ND","rank":6,"lat":"46.88","lng":"-96.79"},
-      {"city":"Grand Prairie, TX","rank":7,"lat":"32.69","lng":"-97.02"},
-      {"city":"San Jose, CA","rank":8,"lat":"37.30","lng":"-121.82"},
-      {"city":"Scottsdale, AZ","rank":9,"lat":"33.68","lng":"-111.86"},
-      {"city":"San Francisco, CA","rank":10,"lat":"37.73","lng":"-123.03"},
-      {"city":"Bismarck, ND","rank":11,"lat":"46.81","lng":"-100.78"},
-      {"city":"Overland Park, KS","rank":12,"lat":"38.89","lng":"-94.69"},
-      {"city":"Santa Rosa, CA","rank":13,"lat":"38.45","lng":"-122.71"},
-      {"city":"Austin, TX","rank":14,"lat":"30.30","lng":"-97.75"},
-      {"city":"Sioux Falls, SD","rank":15,"lat":"43.54","lng":"-96.73"},
-      {"city":"Pearl City, HI","rank":16,"lat":"21.41","lng":"-157.97"},
-      {"city":"Glendale, CA","rank":17,"lat":"34.15","lng":"-118.26"},
-      {"city":"San Diego, CA","rank":18,"lat":"32.82","lng":"-117.13"},
-      {"city":"St. Paul, MN","rank":19,"lat":"44.95","lng":"-93.10"},
-      {"city":"Charleston, SC","rank":20,"lat":"32.82","lng":"-79.96"}
-    ],*/
-  /*  happiestStates: [
-      {"state": "Andhra Pradesh", "rank": 1},
-      {"state": "Tamilnadu", "rank": 2},
-      {"state": "Rajasthan", "rank": 3},
-      {"state": "Kerala", "rank": 4},
-      {"state": "Gujarat", "rank": 5},
-      {"state": "Assam", "rank": 6},
-      {"state": "Arunachal Pradesh", "rank": 7},
-      {"state": "Bihar", "rank": 8},
-      {"state": "West Bengal", "rank": 9},
-      {"state": "CT", "rank": 10},
-      {"state": "IA", "rank": 11},
-      {"state": "ND", "rank": 12},
-      {"state": "NV", "rank": 13},
-      {"state": "VA", "rank": 14},
-      {"state": "NY", "rank": 15},
-      {"state": "DE", "rank": 16 },
-      {"state": "GA", "rank": 17 },
-      {"state": "AZ", "rank": 18 },
-      {"state": "CO", "rank": 19 },
-      {"state": "VT", "rank": 20 },
-      {"state": "WA", "rank": 21 },
-      {"state": "NH", "rank": 22 },
-      {"state": "TX", "rank": 23 },
-      {"state": "IL", "rank": 24 },
-      {"state": "WI", "rank": 25 },
-      {"state": "PA", "rank": 26 },
-      {"state": "SD", "rank": 27 },
-      {"state": "FL", "rank": 28 },
-      {"state": "SC", "rank": 29 },
-      {"state": "NC", "rank": 30 },
-      {"state": "MT", "rank": 31 },
-      {"state": "KS", "rank": 32 },
-      {"state": "RI", "rank": 33 },
-      {"state": "WY", "rank": 34 },
-      {"state": "IN", "rank": 35 },
-      {"state": "MI", "rank": 36 },
-      {"state": "OH", "rank": 37 },
-      {"state": "ME", "rank": 38 },
-      {"state": "OR", "rank": 39 },
-      {"state": "NM", "rank": 40 },
-      {"state": "MO", "rank": 41 },
-      {"state": "TN", "rank": 42 },
-      {"state": "OK", "rank": 43 },
-      {"state": "AL", "rank": 44 },
-      {"state": "KY", "rank": 45 },
-      {"state": "LA", "rank": 46 },
-      {"state": "MS", "rank": 47 },
-      {"state": "AK", "rank": 48 },
-      {"state": "AR", "rank": 49 },
-      {"state": "WV", "rank": 50 }
-    ]*/
   },
   methods:{
     updateDetails:function(index)
@@ -176,44 +102,10 @@ var app = new Vue({
         }
       })
     },
-    
-    // Construct the city data to be used by the circle elements
-  /*-  cityData () {
-      return this.happiestCities.map(city => {
-        return {
-          city: city.city,
-          x: this.projection([city.lng, city.lat])[0],
-          y: this.projection([city.lng, city.lat])[1],
-          color: this.cityColor(city.rank),
-          size: this.citySize(city.rank)
-        }
-      })
-    },*/
 
     // Interpolate from red to green in the domain 50 to 1 (our ranking)
     stateColor () {
       return d3.scaleSequential().domain([50, 1]).interpolator(d3.interpolateRdYlGn)
-    },
-
-    // Interpolate between two green colors for the happiest cities
-  /*  cityColor () {
-      return d3.scaleLinear().domain([20, 1]).range(['#32a852', '#10732b'])
-    },
-
-    // Interpolate between two sizes for the happiest cities
-    citySize () {
-      return d3.scaleLinear().domain([20, 1]).range([5, 15])
-    }*/
+    }
   }
-
-  // On creation, get the GeoJSON
-/*  created () {
-    axios.get('https://api.github.com/gists/e0d1b7950ced31369c903bed0cead7b1')
-      .then(response => {
-      this.statesJson = JSON.parse(response.data.files['us_features.json'].content)
-    })
-      .catch(error => {
-      console.log(error)
-    })
-  }*/
 })
