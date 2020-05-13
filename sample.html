@@ -22,7 +22,7 @@
        stroke: 'darkslategray'
      }"
       @mouseover="updateDetails(index)">
-     <title class="tooltip" v-if="statesJson.features">{{state.feature.id}}</title>
+     <title v-if="statesJson.features">{{state.feature.id}}</title>
    </path>
  </svg>
 </div>
