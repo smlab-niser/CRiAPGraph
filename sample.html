@@ -1,22 +1,57 @@
 <!DOCTYPE html>
 <html lang="en">
+<style>
+.tooltip {
+  position: relative;
+  display: inline-block;
+  border-bottom: 1px dotted black;
+}
 
+.tooltip .tooltiptext {
+  visibility: hidden;
+  width: 120px;
+  background-color: black;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px 0;
+  position: absolute;
+  z-index: 1;
+  bottom: 150%;
+  left: 50%;
+  margin-left: -60px;
+}
+
+
+
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+}
+.bar:hover {
+    fill: #ec008c;
+    opacity: 0.6;
+}
+</style>
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 </head>
 <body style="text-align:center;">
-<div id="app">
+<div id="app" >
   <svg ref="svg" height="600" width="1300">
-   <path
+   <path class="bar"
      v-for="(state, index) in stateData"
      :d="pathGenerator(state.feature)"
      :style="{
        fill: state.color,
        stroke: 'darkslategray'
-     }" @mouseover="updateDetails(index)"></path>
+     }"
+      @mouseover="updateDetails(index)">
+     <title class="tooltip" v-if="statesJson.features">{{state.feature.id}}</title>
+   </path>
  </svg>
 </div>
+
 
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.2/axios.min.js"></script>
