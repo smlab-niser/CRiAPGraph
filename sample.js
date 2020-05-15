@@ -66,21 +66,43 @@ var app = new Vue({
 },
   },
   methods:{
-    updateDetails:function(index)
+    updateDetails:function(index, evt)
     {
       this.selectedState = index
     //  return this.statesJson.features[this.selectedState].id
       console.log(this.selectedState)
       console.log(this.statesJson.features[this.selectedState].id)
+    //   return innerHTML = `<div class="tooltip">
+    //   <span class="tooltiptext">${this.statesJson.features[this.selectedState].id}</span>
+    // </div>`
+    function showTooltip(evt, text) {
+      console.log("i am evebt", evt);
 
+      let tooltip = document.getElementById("tooltip");
+      tooltip.innerHTML = text;
+      tooltip.style.display = "block";
+      tooltip.style.left = evt.pageX + 10 + 'px';
+      tooltip.style.top = evt.pageY + 10 + 'px';
     }
+
+    showTooltip(evt,this.statesJson.features[this.selectedState].id )
+
+    },
+     hideTooltip:function() {
+      var tooltip = document.getElementById("tooltip");
+      tooltip.style.display = "none";
+    }
+
   },
+
+
 
   computed: {
     // Typical projection for showing all states scaled and positioned appropriately
     projection () {
       return d3.geoMercator().scale(900).translate([-500, 600])
     },
+
 
   /* updateName(){
       return this.statesJson.features[this.selectedState].id
@@ -102,10 +124,9 @@ var app = new Vue({
         }
       })
     },
-
     // Interpolate from red to green in the domain 50 to 1 (our ranking)
     stateColor () {
       return d3.scaleSequential().domain([50, 1]).interpolator(d3.interpolateRdYlGn)
-    }
+    },
   }
 })
