@@ -1,18 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
 <style>
+  #tooltip {
+  padding: 20px;
+  opacity: 1;
+  color: gainsboro;
+  text-shadow: 3px 1px blue;
+  font-size:360%;
+  text-indent: 1000px;
+}
 .bar:hover {
     fill: #ec008c;
     opacity: 0.6;
-}
+  }
 </style>
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 </head>
-<body style="text-align:center;">
-<div id="app" >
-  <svg ref="svg" height="600" width="1300">
+<body>
+<div id="app">
+  <div id="tooltip" display="none" style="position: absolute; display: none;"></div>
+  <svg id="svg" ref="svg" height="600" width="1300">
    <path class="bar"
      v-for="(state, index) in stateData"
      :d="pathGenerator(state.feature)"
@@ -20,11 +29,13 @@
        fill: state.color,
        stroke: 'darkslategray'
      }"
-      @mouseover="updateDetails(index)">
-     <title v-if="statesJson.features">{{state.feature.id}}</title>
+      @mouseover="updateDetails(index,state)"
+      @mouseout = "hideTooltip()"
+      >
    </path>
  </svg>
 </div>
+
 
 
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
@@ -32,7 +43,7 @@
     <script src="https://d3js.org/d3.v5.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/fetch/3.0.0/fetch.min.js.map"></script>
 
-    <script src="sample.js"></script>
+    <script src="sample2.js"></script>
 
     </body>
     </html>
