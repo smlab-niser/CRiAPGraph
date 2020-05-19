@@ -1,7 +1,18 @@
 var app = new Vue({
   el: "#app",
   data: {
+    webURL:[{
+      id:0,URL:"https://raw.githubusercontent.com/smlab-niser/CRiAPGraph/master/districts/Andhra%20Pradesh.json?token=AOYHVJ22Y4JWLLUXWXODLRK6ZKARK"
+    },
+  {
+    id:22,URL:"https://raw.githubusercontent.com/smlab-niser/CRiAPGraph/master/districts/rajasthan.json?token=AOYHVJ575LRB2FOYBJMVKWK6ZKAVY"
+  },
+  {
+    id:3,URL:"https://raw.githubusercontent.com/smlab-niser/CRiAPGraph/master/states.json?token=AOYHVJ2BNIP7L3TMOE66JWK6ZKBRK"
+  }
+],
     selectedState:0,
+    cityJson: null,
     statesJson: null
   },
   methods:{
@@ -16,7 +27,6 @@ var app = new Vue({
     // </div>`
     function showTooltip(evt, text) {
       console.log("i am evebt", evt);
-
       let tooltip = document.getElementById("tooltip");
       tooltip.innerHTML = text;
       tooltip.style.display = "block";
@@ -30,19 +40,30 @@ var app = new Vue({
      hideTooltip:function() {
       var tooltip = document.getElementById("tooltip");
       tooltip.style.display = "none";
-    }
-
+    },
   },
+
+
+
   computed: {
     // Typical projection for showing all states scaled and positioned appropriately
     projection () {
-      return d3.geoMercator().scale(900).translate([-500, 600])
+      return d3.geoMercator().scale(900).translate([-700, 700])
     },
 
     // Function for converting GPS coordinates into path coordinates
     pathGenerator () {
       return d3.geoPath().projection(this.projection)
     },
+    projection1 () {
+      return d3.geoMercator().scale(2500).translate([-2300, 1000])
+    },
+
+    // Function for converting GPS coordinates into path coordinates
+    pathGenerator1 () {
+      return d3.geoPath().projection(this.projection1)
+    },
+
 
     // Combine the states GeoJSON with a rank-based gradient
     stateData () {
@@ -54,19 +75,36 @@ var app = new Vue({
         }
       }):[]
     },
-    // Interpolate from red to green in the domain 50 to 1
+    cityData(){
+      return this.cityJson ? this.cityJson.features.map(feature1 =>{
+        return {
+          feature1
+        }
+      }):[]
+    },
+    // Interpolate from red to green in the domain 50 to 1 (our ranking)
     stateColor () {
       return d3.scaleSequential().domain([50, 1]).interpolator(d3.interpolateRdYlGn)
     },
+    create(){
+      console.log(this.selectedState)
+    }
   },
+  // On creation, get the GeoJSON
   created () {
-    axios.get('https://raw.githubusercontent.com/smlab-niser/CRiAPGraph/master/states.json?token=AOYHVJ5WOTPOMJCD3XLLRYS6ZFBUO')
-      .then(response => (
-      this.statesJson = response.data,
-    console.log(response))
-    )
+    axios.all([axios.get('https://raw.githubusercontent.com/smlab-niser/CRiAPGraph/master/states.json?token=AOYHVJ2BNIP7L3TMOE66JWK6ZKBRK'),
+               axios.get(this.webURL[this.selectedState].URL)])
+      .then(axios.spread((user1,user2) => (
+        console.log(user1.data),
+        console.log(this.selectedState),
+        console.log(user2.data),
+        this.statesJson=user1.data,
+        this.cityJson=user2.data
+//      this.statesJson = response.data,
+  //  console.log(response))
+)))
       .catch(error => {
       console.log(error)
     })
-  }
+  },
 })
