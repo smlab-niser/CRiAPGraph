@@ -21,7 +21,7 @@
 <body>
 <div id="app">
   <div id="tooltip" display="none" style="position: absolute; display: none;"></div>
-  <svg id="svg" ref="svg" height="600" width="1300">
+  <svg id="svg" ref="svg" height="800" width="1600">
    <path class="bar"
      v-for="(state, index) in stateData"
      :d="pathGenerator(state.feature)"
@@ -33,17 +33,24 @@
       @mouseout = "hideTooltip()"
       >
    </path>
+     <path class="bar"
+       v-for="(city, index) in cityData"
+       :d="pathGenerator1(city.feature1)"
+       :style="{
+         fill: city.color,
+         stroke: 'darkslategray'
+       }">
+     </path>
  </svg>
 </div>
 
-
+    <script src="sample2.js"></script>
 
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.2/axios.min.js"></script>
     <script src="https://d3js.org/d3.v5.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/fetch/3.0.0/fetch.min.js.map"></script>
 
-    <script src="sample2.js"></script>
+
 
     </body>
     </html>
