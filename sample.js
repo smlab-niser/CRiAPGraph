@@ -1,24 +1,47 @@
+
 var app = new Vue({
   el: "#app",
-  data: {
-    webURL:[{
-      id:0,URL:"https://raw.githubusercontent.com/smlab-niser/CRiAPGraph/master/districts/Andhra%20Pradesh.json?token=AOYHVJ22Y4JWLLUXWXODLRK6ZKARK"
-    },
-  {
-    id:22,URL:"https://raw.githubusercontent.com/smlab-niser/CRiAPGraph/master/districts/rajasthan.json?token=AOYHVJ575LRB2FOYBJMVKWK6ZKAVY"
-  },
-  {
-    id:3,URL:"https://raw.githubusercontent.com/smlab-niser/CRiAPGraph/master/states.json?token=AOYHVJ2BNIP7L3TMOE66JWK6ZKBRK"
-  }
-],
+  data(){
+    return {
+    webURL:[{URL:"https://raw.githubusercontent.com/smlab-niser/CRiAPGraph/master/districts/Andhra%20Pradesh.json"},
+            {URL:"https://raw.githubusercontent.com/smlab-niser/CRiAPGraph/master/districts/Arunachal%20Pradesh.json"},
+            {URL:"https://raw.githubusercontent.com/smlab-niser/CRiAPGraph/master/districts/Assam.json"},
+            {URL:"https://raw.githubusercontent.com/smlab-niser/CRiAPGraph/master/districts/Bihar.json"},
+            {URL:"https://raw.githubusercontent.com/smlab-niser/CRiAPGraph/master/districts/Chhattisgarh.json"},
+            {URL:"https://raw.githubusercontent.com/smlab-niser/CRiAPGraph/master/districts/Delhi.json"},
+            {URL:"https://raw.githubusercontent.com/smlab-niser/CRiAPGraph/master/districts/Goa.json"},
+            {URL:"https://raw.githubusercontent.com/smlab-niser/CRiAPGraph/master/districts/Gujarat.json"},
+            {URL:"https://raw.githubusercontent.com/smlab-niser/CRiAPGraph/master/districts/Haryana.json"},
+            {URL:"https://raw.githubusercontent.com/smlab-niser/CRiAPGraph/master/districts/Himachal%20Pradesh.json"},
+            {URL:"https://raw.githubusercontent.com/smlab-niser/CRiAPGraph/master/districts/Jammu%20%26%20Kashmir.json"},
+            {URL:"https://raw.githubusercontent.com/smlab-niser/CRiAPGraph/master/districts/Jharkhand.json"},
+            {URL:"https://raw.githubusercontent.com/smlab-niser/CRiAPGraph/master/districts/Karnataka.json"},
+            {URL:"https://raw.githubusercontent.com/smlab-niser/CRiAPGraph/master/districts/Kerala.json"},
+            {URL:"https://raw.githubusercontent.com/smlab-niser/CRiAPGraph/master/districts/Madhya%20Pradesh.json"},
+            {URL:"https://raw.githubusercontent.com/smlab-niser/CRiAPGraph/master/districts/Maharashtra.json"},
+            {URL:"https://raw.githubusercontent.com/smlab-niser/CRiAPGraph/master/districts/Manipur.json"},
+            {URL:"https://raw.githubusercontent.com/smlab-niser/CRiAPGraph/master/districts/Meghalaya.json"},
+            {URL:"https://raw.githubusercontent.com/smlab-niser/CRiAPGraph/master/districts/Mizoram.json"},
+            {URL:"https://raw.githubusercontent.com/smlab-niser/CRiAPGraph/master/districts/Nagaland.json"},
+            {URL:"https://raw.githubusercontent.com/smlab-niser/CRiAPGraph/master/districts/Orissa.json"},
+            {URL:"https://raw.githubusercontent.com/smlab-niser/CRiAPGraph/master/districts/Punjab.json"},
+            {URL:"https://raw.githubusercontent.com/smlab-niser/CRiAPGraph/master/districts/Rajasthan.json"},
+            {URL:"https://raw.githubusercontent.com/smlab-niser/CRiAPGraph/master/districts/Sikkim.json"},
+            {URL:"https://raw.githubusercontent.com/smlab-niser/CRiAPGraph/master/districts/Tamil%20Nadu.json"},
+            {URL:"https://raw.githubusercontent.com/smlab-niser/CRiAPGraph/master/districts/Tripura.json"},
+            {URL:"https://raw.githubusercontent.com/smlab-niser/CRiAPGraph/master/districts/Uttar%20Pradesh.json"},
+            {URL:"https://raw.githubusercontent.com/smlab-niser/CRiAPGraph/master/districts/Uttaranchal.json"},
+            {URL:"https://raw.githubusercontent.com/smlab-niser/CRiAPGraph/master/districts/West%20Bengal.json"},
+    ],
     selectedState:0,
     cityJson: null,
     statesJson: null
-  },
+  }},
   methods:{
     updateDetails:function(index, evt)
     {
-      this.selectedState = index
+      this.selectedState = index;
+      this.axiosCall();
     //  return this.statesJson.features[this.selectedState].id
       console.log(this.selectedState)
       console.log(this.statesJson.features[this.selectedState].id)
@@ -32,31 +55,50 @@ var app = new Vue({
       tooltip.style.display = "block";
       tooltip.style.left = evt.pageX + 10 + 'px';
       tooltip.style.top = evt.pageY + 10 + 'px';
-    }
-
+    };
+    /*function getIndex(){
+      return index
+    }*/
     showTooltip(evt,this.statesJson.features[this.selectedState].id )
-
     },
      hideTooltip:function() {
       var tooltip = document.getElementById("tooltip");
       tooltip.style.display = "none";
     },
-  },
+    axiosCall() {
+   axios.all([axios.get('https://raw.githubusercontent.com/smlab-niser/CRiAPGraph/master/states.json?token=AOYHVJ2BNIP7L3TMOE66JWK6ZKBRK'),
+           axios.get(this.webURL[this.selectedState].URL)])
+  .then(axios.spread((user1,user2) => (
+    console.log(user1.data),
+    console.log(this.selectedState),
+    console.log(user2.data),
+    this.statesJson=user1.data,
+    this.cityJson=user2.data
+  )))
+  .catch(error => {
+  console.log(error)
+  })
+},
 
+  },
 
 
   computed: {
     // Typical projection for showing all states scaled and positioned appropriately
     projection () {
-      return d3.geoMercator().scale(900).translate([-700, 700])
+      return d3.geoMercator().scale(900).translate([-1000, 700])
     },
 
     // Function for converting GPS coordinates into path coordinates
     pathGenerator () {
-      return d3.geoPath().projection(this.projection)
+      var path= d3.geoPath().projection(this.projection)
+      return path
+    },
+    bounds(){
+      var bound=path.bounds(this.statesJson.features)
     },
     projection1 () {
-      return d3.geoMercator().scale(2500).translate([-2300, 1000])
+      return d3.geoMercator().scale(1000).translate([-800, 600])
     },
 
     // Function for converting GPS coordinates into path coordinates
@@ -86,25 +128,10 @@ var app = new Vue({
     stateColor () {
       return d3.scaleSequential().domain([50, 1]).interpolator(d3.interpolateRdYlGn)
     },
-    create(){
-      console.log(this.selectedState)
-    }
   },
   // On creation, get the GeoJSON
-  created () {
-    axios.all([axios.get('https://raw.githubusercontent.com/smlab-niser/CRiAPGraph/master/states.json?token=AOYHVJ2BNIP7L3TMOE66JWK6ZKBRK'),
-               axios.get(this.webURL[this.selectedState].URL)])
-      .then(axios.spread((user1,user2) => (
-        console.log(user1.data),
-        console.log(this.selectedState),
-        console.log(user2.data),
-        this.statesJson=user1.data,
-        this.cityJson=user2.data
-//      this.statesJson = response.data,
-  //  console.log(response))
-)))
-      .catch(error => {
-      console.log(error)
-    })
-  },
+
+  created:function(index){
+        this.axiosCall();
+      }
 })
