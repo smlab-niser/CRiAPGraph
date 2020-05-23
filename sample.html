@@ -7,7 +7,16 @@
   color: gainsboro;
   text-shadow: 3px 1px blue;
   font-size:360%;
-  text-indent: 1000px;
+  text-indent: 300px;
+}
+#tooltip1 {
+padding: 20px;
+opacity: 1;
+color: gainsboro;
+text-shadow: 3px 1px blue;
+font-size:240%;
+text-indent: 300px;
+top:70px;
 }
 .bar:hover {
     fill: #ec008c;
@@ -29,18 +38,18 @@
        fill: state.color,
        stroke: 'darkslategray'
      }"
-      @mouseover="updateDetails(index,state)"
-      @mouseout = "hideTooltip()"
-      >
+      @click="updateState(index,state)">
    </path></svg>
+   <div id="tooltip1" display="none" style="position: absolute; display: none;"></div>
    <svg id="svg" ref="svg" height="700" width="700">
      <path class="bar"
-       v-for="(city, index) in cityData"
-       :d="pathGenerator1(city.feature1)"
+       v-for="(city, index1) in cityData"
+       :d="projection1(city.feature1)"
        :style="{
          fill: city.color,
          stroke: 'darkslategray'
-       }">
+       }"
+       @click="updateCity(index1,city)">
      </path>
  </svg>
 </div>
