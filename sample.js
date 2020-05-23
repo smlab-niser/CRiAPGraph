@@ -34,11 +34,12 @@ var app = new Vue({
             {URL:"https://raw.githubusercontent.com/smlab-niser/CRiAPGraph/master/districts/West%20Bengal.json"},
     ],
     selectedState:0,
+    selectedCity:0,
     cityJson: null,
     statesJson: null
   }},
   methods:{
-    updateDetails:function(index, evt)
+    updateState:function(index, evt)
     {
       this.selectedState = index;
       this.axiosCall();
@@ -56,9 +57,7 @@ var app = new Vue({
       tooltip.style.left = evt.pageX + 10 + 'px';
       tooltip.style.top = evt.pageY + 10 + 'px';
     };
-    /*function getIndex(){
-      return index
-    }*/
+
     showTooltip(evt,this.statesJson.features[this.selectedState].id )
     },
      hideTooltip:function() {
@@ -79,6 +78,21 @@ var app = new Vue({
   console.log(error)
   })
 },
+updateCity:function(index1, evt){
+  this.selectedCity=index1
+  console.log(this.selectedCity)
+  console.log('city=',this.cityJson.features[this.selectedCity].properties.NAME_2)
+  function showTooltip1(evt, text) {
+    console.log("i am evebt", evt);
+    console.log('text',text)
+    let tooltip = document.getElementById("tooltip1");
+    tooltip.innerHTML = text;
+    tooltip.style.display = "block";
+    tooltip.style.left = evt.pageX + 10 + 'px';
+    tooltip.style.top = evt.pageY + 10 + 'px';
+  };
+  showTooltip1(evt,this.cityJson.features[this.selectedCity].properties.NAME_2)
+}
 
   },
 
@@ -94,17 +108,29 @@ var app = new Vue({
       var path= d3.geoPath().projection(this.projection)
       return path
     },
-    bounds(){
-      var bound=path.bounds(this.statesJson.features)
-    },
     projection1 () {
-      return d3.geoMercator().scale(1000).translate([-800, 600])
+    //  create(){
+        var width=400
+        var height=300
+        var scale=80
+        var center=d3.geoCentroid(this.cityJson)
+        var bounds  = d3.geoBounds(this.cityJson);
+        console.log(bounds)
+  var hscale  = scale*width  / (bounds[1][0] - bounds[0][0]);
+  var vscale  = scale*height / (bounds[1][1] - bounds[0][1]);
+  var scale   = (hscale < vscale) ? hscale : vscale;
+  var offset  = [width - (bounds[0][0] + bounds[1][0])/2,
+                    height - (bounds[0][1] + bounds[1][1])/2];
+  var projection2=d3.geoMercator().center(center).scale(scale).translate(offset);
+  return d3.geoPath().projection(projection2)
+  },
+  /*    return d3.geoMercator().scale(1000).translate([-800, 600])
     },
 
     // Function for converting GPS coordinates into path coordinates
     pathGenerator1 () {
       return d3.geoPath().projection(this.projection1)
-    },
+    },*/
 
 
     // Combine the states GeoJSON with a rank-based gradient
