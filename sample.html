@@ -22,6 +22,19 @@ top:70px;
     fill: #ec008c;
     opacity: 0.6;
   }
+  .button {
+  background-color: #4CAF50;
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+  margin-right: 0px;
+}
 </style>
 <head>
   <meta charset="utf-8"/>
@@ -30,7 +43,7 @@ top:70px;
 <body>
 <div id="app">
   <div id="tooltip" display="none" style="position: absolute; display: none;"></div>
-  <svg id="svg" ref="svg" height="700" width="600">
+  <svg id="svg" ref="svg" height="700" width="600" style="background-color:green">
    <path class="bar"
      v-for="(state, index) in stateData"
      :d="pathGenerator(state.feature)"
@@ -49,17 +62,21 @@ top:70px;
          fill: city.color,
          stroke: 'darkslategray'
        }"
-       @click="updateCity(index1,city)">
+       @click="updateCity(index1,city);updateData(data2)">
      </path>
  </svg>
+
+<div id="my_dataviz"  style="background-color:lightblue; width:50%;"></div>
+
 </div>
-
-
 
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.2/axios.min.js"></script>
     <script src="https://d3js.org/d3.v5.min.js"></script>
+
+    <script src="https://d3js.org/d3.v5.js"></script>
     <script src="sample2.js"></script>
+
 
 
     </body>
