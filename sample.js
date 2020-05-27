@@ -36,8 +36,26 @@ var app = new Vue({
     selectedState:0,
     selectedCity:0,
     cityJson: null,
-    statesJson: null
+    statesJson: null,
+    data1: [
+     {ser1: 0.3, ser2: 4},
+     {ser1: 2, ser2: 16},
+     {ser1: 3, ser2: 8}
+   ],
+    data2: [
+       {ser1: 1, ser2: 7},
+       {ser1: 4, ser2: 1},
+       {ser1: 6, ser2: 8}
+    ],
+    margin: {top: 10, right: 30, bottom: 30, left: 50},
+    width: null,
+    height: null
   }},
+  mounted(){
+          this.width = 460 - this.margin.left - this.margin.right;
+          this.height = 400 - this.margin.top - this.margin.bottom;
+          this.createSvg();
+  },
   methods:{
     updateState:function(index, evt)
     {
@@ -91,11 +109,90 @@ updateCity:function(index1, evt){
     tooltip.style.left = evt.pageX + 10 + 'px';
     tooltip.style.top = evt.pageY + 10 + 'px';
   };
-  showTooltip1(evt,this.cityJson.features[this.selectedCity].properties.NAME_2)
-}
 
+  showTooltip1(evt,this.cityJson.features[this.selectedCity].properties.NAME_2);
+},
+createSvg() {
+    var svg = d3.select("#my_dataviz")
+      .append("svg")
+      .attr("width", this.width + this.margin.left + this.margin.right)
+      .attr("height", this.height + this.margin.top + this.margin.bottom)
+      .attr("fill", "blue")
+      .append("g")
+      .attr("transform",
+        "translate(" + this.margin.left + "," + this.margin.top + ")");
+
+    var x = d3.scaleLinear().range([0, this.width]);
+    var xAxis = d3.axisBottom().scale(x);
+    svg.append("g")
+      .attr("transform", "translate(0," + this.height + ")")
+      .attr("class", "myXaxis")
+
+    var y = d3.scaleLinear().range([this.height, 0]);
+    var yAxis = d3.axisLeft().scale(y);
+    svg.append("g")
+      .attr("class", "myYaxis");
+
+
+    this.update(svg, x, y, xAxis, yAxis, this.data1)
   },
+  updateData(data) {
+    var svg = d3.select("#my_dataviz");
 
+    var x = d3.scaleLinear().range([0, this.width]);
+    var xAxis = d3.axisBottom().scale(x);
+
+    var y = d3.scaleLinear().range([this.height, 0]);
+    var yAxis = d3.axisLeft().scale(y);
+
+
+    this.update(svg, x, y, xAxis, yAxis, data);
+  },
+  update(svg, x, y, xAxis, yAxis, data) {
+    // Create the X axis:
+    x.domain([0, d3.max(data, function(d) {
+      return d.ser1
+    })]);
+    svg.selectAll(".myXaxis").transition()
+      .duration(3000)
+      .call(xAxis);
+
+    // create the Y axis
+    y.domain([0, d3.max(data, function(d) {
+      return d.ser2
+    })]);
+    svg.selectAll(".myYaxis")
+      .transition()
+      .duration(3000)
+      .call(yAxis);
+
+    // Create a update selection: bind to the new data
+    var u = svg.selectAll(".lineTest")
+      .data([data], function(d) {
+        return d.ser1
+      });
+
+    // Updata the line
+    u
+      .enter()
+      .append("path")
+      .attr("class", "lineTest")
+      .merge(u)
+      .transition()
+      .duration(3000)
+      .attr("d", d3.line()
+        .x(function(d) {
+          return x(d.ser1);
+        })
+        .y(function(d) {
+          return y(d.ser2);
+        }))
+      .attr("fill", "none")
+      .attr("stroke", "steelblue")
+      .attr("stroke-width", 2.5)
+
+  }
+},
 
   computed: {
     // Typical projection for showing all states scaled and positioned appropriately
@@ -109,7 +206,6 @@ updateCity:function(index1, evt){
       return path
     },
     projection1 () {
-    //  create(){
         var width=400
         var height=300
         var scale=80
@@ -159,5 +255,5 @@ updateCity:function(index1, evt){
 
   created:function(index){
         this.axiosCall();
-      }
+      },
 })
