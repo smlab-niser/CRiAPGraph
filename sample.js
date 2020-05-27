@@ -37,9 +37,11 @@ var app = new Vue({
     selectedCity:0,
     cityJson: null,
     statesJson: null,
-    data1: [
-     {ser1: 0.3, ser2: 4},
+    data1: [{ser1: 0.3, ser2: 4},
      {ser1: 2, ser2: 16},
+     {ser1: 4, ser2: 18},
+     {ser1: 2.5, ser2: 20},
+     {ser1: 3.4, ser2: 14},
      {ser1: 3, ser2: 8}
    ],
     data2: [
