@@ -1,4 +1,3 @@
-
 var app = new Vue({
   el: "#app",
   data(){
@@ -37,7 +36,12 @@ var app = new Vue({
     selectedCity:0,
     cityJson: null,
     statesJson: null,
-    data1: [{ser1: 0.3, ser2: 4},
+    xyz: null,
+    age: '',
+    selectedIndex: '',
+    options: [1999,2000,2001,2002,2003,2004,2005,2006,2007,2008],
+    data1: [
+     {ser1: 0.3, ser2: 4},
      {ser1: 2, ser2: 16},
      {ser1: 4, ser2: 18},
      {ser1: 2.5, ser2: 20},
@@ -77,8 +81,7 @@ var app = new Vue({
       tooltip.style.left = evt.pageX + 10 + 'px';
       tooltip.style.top = evt.pageY + 10 + 'px';
     };
-
-    showTooltip(evt,this.statesJson.features[this.selectedState].id )
+    showTooltip(evt, 'State:' + this.statesJson.features[this.selectedState].id)
     },
      hideTooltip:function() {
       var tooltip = document.getElementById("tooltip");
@@ -86,13 +89,17 @@ var app = new Vue({
     },
     axiosCall() {
    axios.all([axios.get('https://raw.githubusercontent.com/smlab-niser/CRiAPGraph/master/states.json?token=AOYHVJ2BNIP7L3TMOE66JWK6ZKBRK'),
-           axios.get(this.webURL[this.selectedState].URL)])
-  .then(axios.spread((user1,user2) => (
+           axios.get(this.webURL[this.selectedState].URL),
+           axios.get('https://sheet.best/api/sheets/fede5525-c729-4e4f-b042-062d54a2a702/tabs/GDP')])
+  .then(axios.spread((user1,user2,user3) => (
     console.log(user1.data),
     console.log(this.selectedState),
     console.log(user2.data),
+    console.log('selected',this.selected),
     this.statesJson=user1.data,
-    this.cityJson=user2.data
+    this.cityJson=user2.data,
+    this.xyz=user3.data,
+    console.log('sheet=',this.xyz)
   )))
   .catch(error => {
   console.log(error)
@@ -110,10 +117,46 @@ updateCity:function(index1, evt){
     tooltip.style.display = "block";
     tooltip.style.left = evt.pageX + 10 + 'px';
     tooltip.style.top = evt.pageY + 10 + 'px';
-  };
-
-  showTooltip1(evt,this.cityJson.features[this.selectedCity].properties.NAME_2);
+  }
+  function hideTooltip1() {
+   var tooltip = document.getElementById("tooltip1");
+   tooltip.style.display = "none";
+ }
+  if(this.statesJson.features[this.selectedState].id === this.cityJson.features[this.selectedCity].properties.NAME_1){
+  showTooltip1(evt, 'District:' + this.cityJson.features[this.selectedCity].properties.NAME_2);
+}
+else{
+  hideTooltip1();
+}
 },
+findCommonElement(index1,evt) {
+  function showTooltip2(evt, text) {
+    let tooltip = document.getElementById("tooltip2");
+    tooltip.innerHTML = text;
+    tooltip.style.display = "block";
+    tooltip.style.left = evt.pageX + 30 + 'px';
+    tooltip.style.top = evt.pageY + 30 + 'px';
+  };
+    // Loop for array1
+  for(let i = 0; i < this.xyz.length; i++) {
+        // Loop for array2
+       for(let j = 0; j < this.cityJson.features.length; j++) {
+
+            // Compare the element of each and
+            // every element from both of the
+            // arrays
+
+           if(this.xyz[i].District === this.cityJson.features[this.selectedCity].properties.NAME_2) {
+             showTooltip2(evt, 'GDP:' + this.xyz[i][this.age]);
+             console.log('index',this.selectedIndex)
+    }
+    break;
+    // Return if no common element exist
+}}},
+selected: function () {
+   this.selectedIndex = this.age
+   console.log('this is selected Index ' + this.selectedIndex)
+ },
 createSvg() {
     var svg = d3.select("#my_dataviz")
       .append("svg")
@@ -199,7 +242,7 @@ createSvg() {
   computed: {
     // Typical projection for showing all states scaled and positioned appropriately
     projection () {
-      return d3.geoMercator().scale(900).translate([-1000, 700])
+      return d3.geoMercator().scale(900).translate([-1030, 700])
     },
 
     // Function for converting GPS coordinates into path coordinates
@@ -208,7 +251,7 @@ createSvg() {
       return path
     },
     projection1 () {
-        var width=400
+        var width=380
         var height=300
         var scale=80
         var center=d3.geoCentroid(this.cityJson)
