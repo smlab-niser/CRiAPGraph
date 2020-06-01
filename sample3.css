@@ -3,7 +3,7 @@ opacity: 1;
 color: gainsboro;
 text-shadow: 3px 1px blue;
 font-size:360%;
-bottom: 100px;
+bottom: 105px;
 text-indent: 0%;
 right: 80px;
 }
@@ -41,17 +41,56 @@ margin: 4px 2px;
 cursor: pointer;
 margin-right: 0px;
 }
-select{
-background-color: DodgerBlue;
-padding: 8px 16px;
-font-family: Arial;
+select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    -ms-appearance: none;
+    appearance: none;
+    outline: 0;
+    background: green;
+    background-image: none;
+    border:1px solid black;
 }
-div.static {
-position: absolute;
-border: 1px solid transparent;
-border-color: transparent transparent rgba(0, 0, 0, 0.1) transparent;
-cursor: pointer;
-user-select: none;
-right: 80px;
-top: 50px;
+.custom-select {
+    position: relative;
+    display: block;
+    width: 20em;
+    height: 3em;
+    line-height: 3;
+    background: #2C3E50;
+    overflow: hidden;
+    border-radius: .25em;
+    top:-700px;
+    left: 1100px;
+}
+select {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0 0 0 .5em;
+    color: #fff;
+    cursor: pointer;
+}
+select::-ms-expand {
+    display: none;
+}
+.custom-select::after {
+    content: '\25BC';
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    padding: 0 1em;
+    background: #34495E;
+    pointer-events: none;
+}
+.custom-select:hover::after {
+    color: #F39C12;
+}
+
+<!-- For different browsers -->
+.custom-select::after {
+    -webkit-transition: .25s all ease;
+    -o-transition: .25s all ease;
+    transition: .25s all ease;
 }
