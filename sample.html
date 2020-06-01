@@ -1,49 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
-<style>
-  #tooltip {
-  padding: 20px;
-  opacity: 1;
-  color: gainsboro;
-  text-shadow: 3px 1px blue;
-  font-size:360%;
-  text-indent: 300px;
-}
-#tooltip1 {
-padding: 20px;
-opacity: 1;
-color: gainsboro;
-text-shadow: 3px 1px blue;
-font-size:240%;
-text-indent: 300px;
-top:70px;
-}
-.bar:hover {
-    fill: #ec008c;
-    opacity: 0.6;
-  }
-  .button {
-  background-color: #4CAF50;
-  border: none;
-  color: white;
-  padding: 15px 32px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 16px;
-  margin: 4px 2px;
-  cursor: pointer;
-  margin-right: 0px;
-}
-</style>
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <link href="sample3.css" rel="stylesheet" type="text/css">
 </head>
 <body>
 <div id="app">
   <div id="tooltip" display="none" style="position: absolute; display: none;"></div>
-  <svg id="svg" ref="svg" height="700" width="600" style="background-color:green">
+  <svg id="svg" ref="svg" height="700" width="510">
    <path class="bar"
      v-for="(state, index) in stateData"
      :d="pathGenerator(state.feature)"
@@ -54,6 +19,7 @@ top:70px;
       @click="updateState(index,state)">
    </path></svg>
    <div id="tooltip1" display="none" style="position: absolute; display: none;"></div>
+   <div id="tooltip2" display="none" style="position: absolute; display: none;"></div>
    <svg id="svg" ref="svg" height="700" width="700">
      <path class="bar"
        v-for="(city, index1) in cityData"
@@ -62,11 +28,21 @@ top:70px;
          fill: city.color,
          stroke: 'darkslategray'
        }"
-       @mouseover="updateCity(index1,city);updateData(data2)">
+       @mouseover="updateCity(index1,city);updateData(data2);findCommonElement(index1, city)">
      </path>
  </svg>
+ <div class="custom-select"><select class="select" v-model="age"  @change="selected">
+     <option style="display:none;" selected disabled value="">Year</option>
+     <option v-for="option in options" :value="option">{{option}}</option>
+   </select></div>
+<!-- Add 2 buttons -->
+<div>
+<button class="button" style="margin-left:70px" @click="updateData(data1)">Dataset 1</button>
+<button class="button" style="margin-left:0px" @click="updateData(data2)">Dataset 2</button>
+</div>
 
 <div id="my_dataviz"  style="background-color:lightblue; width:50%;"></div>
+
 
 </div>
 
