@@ -1,3 +1,4 @@
+
 var app = new Vue({
   el: "#app",
   data(){
@@ -39,30 +40,91 @@ var app = new Vue({
     xyz: null,
     age: '',
     selectedIndex: '',
-    options: [1999,2000,2001,2002,2003,2004,2005,2006,2007,2008],
-    data1: [
-     {ser1: 0.3, ser2: 4},
-     {ser1: 2, ser2: 16},
-     {ser1: 4, ser2: 18},
-     {ser1: 2.5, ser2: 20},
-     {ser1: 3.4, ser2: 14},
-     {ser1: 3, ser2: 8}
-   ],
-    data2: [
-       {ser1: 1, ser2: 7},
-       {ser1: 4, ser2: 1},
-       {ser1: 6, ser2: 8}
+    set1:null,
+    set2:null,
+    stateGDP: null,
+    options: ["1999-00","2000-01","2001-02","2002-03","2003-04","2004-05","2005-06","2006-07","2007-08","2008-09"],
+    stateId:null,
+    IndexId:null,
+    opened:[],
+    data1: [{
+        ser1: 0.3,
+        ser2: 4
+      },
+      {
+        ser1: 2,
+        ser2: 16
+      },
+      {
+        ser1: 3,
+        ser2: 8
+      }
     ],
-    margin: {top: 10, right: 30, bottom: 30, left: 50},
-    width: null,
-    height: null
+    data2: [{
+        ser1: 1,
+        ser2: 7
+      },
+      {
+        ser1: 4,
+        ser2: 1
+      },
+      {
+        ser1: 6,
+        ser2: 8
+      }
+    ],
+    margin: {top: 50, right: 50, bottom: 50, left: 50},
+    xAxis:null,
+    yAxis:null
   }},
-  mounted(){
-          this.width = 460 - this.margin.left - this.margin.right;
-          this.height = 400 - this.margin.top - this.margin.bottom;
-          this.createSvg();
-  },
   methods:{
+    toggle:function(Id) {
+      this.stateId=Id
+      for(let i=0; i<this.xyz.length; i++){
+        if (this.stateId===this.xyz[i].Id){
+        for(let j = i; this.xyz[j].Id===this.stateId; j++){
+          this.IndexId=this.xyz[j].District
+      }
+      break;
+    }
+    }
+    const index = this.opened.indexOf(Id);
+    if (index > -1) {
+      this.opened.splice(index, 1)
+    } else {
+      this.opened.push(Id)
+    }
+    },
+    mouseoverState:function(index2){
+      this.set1=index2;
+      console.log(this.set1);
+        let tooltip = document.getElementById("tooltip");
+        let tooltip3 = document.getElementById("tooltip3");
+        tooltip2.style.display = "none";
+        tooltip1.style.display = "none";
+        tooltip.innerHTML = this.stateGDP[this.set1].State;
+        tooltip3.innerHTML = this.stateGDP[this.set1][this.age];
+        tooltip.style.display = "block";
+        tooltip3.style.display = "block";
+    },
+    mouseoverDistrict:function(IndexId){
+      this.set2 = IndexId;
+      console.log(this.set2)
+      for(let i=0; i<this.xyz.length; i++){
+        if(this.set2===this.xyz[i].IndexId){
+      let tooltip1 = document.getElementById("tooltip1");
+      let tooltip2 = document.getElementById("tooltip2");
+      tooltip1.innerHTML = this.xyz[i].District;
+      tooltip1.style.display = "block";
+      tooltip2.innerHTML = this.xyz[i][this.age];
+      tooltip2.style.display = "block";
+
+    }
+    }
+    },
+    getRows:function(id) {
+     return this.xyz.filter(district => district.Id === id);
+   },
     updateState:function(index, evt)
     {
       this.selectedState = index;
@@ -73,33 +135,41 @@ var app = new Vue({
     //   return innerHTML = `<div class="tooltip">
     //   <span class="tooltiptext">${this.statesJson.features[this.selectedState].id}</span>
     // </div>`
-    function showTooltip(evt, text) {
+    function showTooltip(evt, text, text1) {
       console.log("i am evebt", evt);
       let tooltip = document.getElementById("tooltip");
+      var tooltip1 = document.getElementById("tooltip1");
+      var tooltip2 = document.getElementById("tooltip2");
+      tooltip1.style.display = "none";
+      tooltip2.style.display = "none";
       tooltip.innerHTML = text;
+      tooltip3.innerHTML = text1;
+      tooltip3.style.display = "block";
       tooltip.style.display = "block";
       tooltip.style.left = evt.pageX + 10 + 'px';
       tooltip.style.top = evt.pageY + 10 + 'px';
     };
-    showTooltip(evt, 'State:' + this.statesJson.features[this.selectedState].id)
-    },
+    showTooltip(evt, this.statesJson.features[this.selectedState].id, this.stateGDP[this.selectedState][this.age])
+  },
      hideTooltip:function() {
-      var tooltip = document.getElementById("tooltip");
+      var tooltip = document.getElementById("tooltip1");
       tooltip.style.display = "none";
     },
     axiosCall() {
    axios.all([axios.get('https://raw.githubusercontent.com/smlab-niser/CRiAPGraph/master/states.json?token=AOYHVJ2BNIP7L3TMOE66JWK6ZKBRK'),
            axios.get(this.webURL[this.selectedState].URL),
-           axios.get('https://sheet.best/api/sheets/fede5525-c729-4e4f-b042-062d54a2a702/tabs/GDP')])
-  .then(axios.spread((user1,user2,user3) => (
+           axios.get('https://sheet.best/api/sheets/27a9daa8-d989-4a30-bdbd-23269e6b61e6/tabs/GDP'),
+           axios.get('https://sheet.best/api/sheets/27a9daa8-d989-4a30-bdbd-23269e6b61e6/tabs/GDP of Indian States 1980-2020')])
+  .then(axios.spread((user1,user2,user3,user4) => (
     console.log(user1.data),
     console.log(this.selectedState),
     console.log(user2.data),
     console.log('selected',this.selected),
+    console.log('user4',this.stateGDP),
     this.statesJson=user1.data,
     this.cityJson=user2.data,
     this.xyz=user3.data,
-    console.log('sheet=',this.xyz)
+    this.stateGDP=user4.data
   )))
   .catch(error => {
   console.log(error)
@@ -108,6 +178,7 @@ var app = new Vue({
 updateCity:function(index1, evt){
   this.selectedCity=index1
   console.log(this.selectedCity)
+  console.log('sheet=',this.compute)
   console.log('city=',this.cityJson.features[this.selectedCity].properties.NAME_2)
   function showTooltip1(evt, text) {
     console.log("i am evebt", evt);
@@ -118,16 +189,7 @@ updateCity:function(index1, evt){
     tooltip.style.left = evt.pageX + 10 + 'px';
     tooltip.style.top = evt.pageY + 10 + 'px';
   }
-  function hideTooltip1() {
-   var tooltip = document.getElementById("tooltip1");
-   tooltip.style.display = "none";
- }
-  if(this.statesJson.features[this.selectedState].id === this.cityJson.features[this.selectedCity].properties.NAME_1){
-  showTooltip1(evt, 'District:' + this.cityJson.features[this.selectedCity].properties.NAME_2);
-}
-else{
-  hideTooltip1();
-}
+showTooltip1(evt, this.cityJson.features[this.selectedCity].properties.NAME_2)
 },
 findCommonElement(index1,evt) {
   function showTooltip2(evt, text) {
@@ -147,98 +209,133 @@ findCommonElement(index1,evt) {
             // arrays
 
            if(this.xyz[i].District === this.cityJson.features[this.selectedCity].properties.NAME_2) {
-             showTooltip2(evt, 'GDP:' + this.xyz[i][this.age]);
-             console.log('index',this.selectedIndex)
+             showTooltip2(evt, this.xyz[i][this.age]);
     }
     break;
     // Return if no common element exist
 }}},
-selected: function () {
+selected: function (event) {
+   let tooltip3 = document.getElementById("tooltip3");
+   console.log(this.stateGDP[1][this.age])
+   tooltip3.innerHTML = this.stateGDP[0][this.age];
+   tooltip.style.display = "block";
    this.selectedIndex = this.age
    console.log('this is selected Index ' + this.selectedIndex)
  },
-createSvg() {
-    var svg = d3.select("#my_dataviz")
-      .append("svg")
-      .attr("width", this.width + this.margin.left + this.margin.right)
-      .attr("height", this.height + this.margin.top + this.margin.bottom)
-      .attr("fill", "blue")
-      .append("g")
-      .attr("transform",
-        "translate(" + this.margin.left + "," + this.margin.top + ")");
+ updateData(data) {
 
-    var x = d3.scaleLinear().range([0, this.width]);
-    var xAxis = d3.axisBottom().scale(x);
-    svg.append("g")
-      .attr("transform", "translate(0," + this.height + ")")
-      .attr("class", "myXaxis")
-
-    var y = d3.scaleLinear().range([this.height, 0]);
-    var yAxis = d3.axisLeft().scale(y);
-    svg.append("g")
-      .attr("class", "myYaxis");
+       var width = 460 - this.margin.left - this.margin.right;
+       var height = 400 - this.margin.top - this.margin.bottom;
 
 
-    this.update(svg, x, y, xAxis, yAxis, this.data1)
-  },
-  updateData(data) {
-    var svg = d3.select("#my_dataviz");
+       var xScale = d3.scaleLinear()
+         .domain([0, Math.max.apply(Math, data.map(x => x.ser1))])
+         .range([0, width]);
 
-    var x = d3.scaleLinear().range([0, this.width]);
-    var xAxis = d3.axisBottom().scale(x);
-
-    var y = d3.scaleLinear().range([this.height, 0]);
-    var yAxis = d3.axisLeft().scale(y);
+       var yScale = d3.scaleLinear()
+         .domain([0, Math.max.apply(Math, data.map(x => x.ser2))])
+         .range([height, 0]);
 
 
-    this.update(svg, x, y, xAxis, yAxis, data);
-  },
-  update(svg, x, y, xAxis, yAxis, data) {
-    // Create the X axis:
-    x.domain([0, d3.max(data, function(d) {
-      return d.ser1
-    })]);
-    svg.selectAll(".myXaxis").transition()
-      .duration(3000)
-      .call(xAxis);
+       // Select the section we want to apply our changes to
 
-    // create the Y axis
-    y.domain([0, d3.max(data, function(d) {
-      return d.ser2
-    })]);
-    svg.selectAll(".myYaxis")
-      .transition()
-      .duration(3000)
-      .call(yAxis);
 
-    // Create a update selection: bind to the new data
-    var u = svg.selectAll(".lineTest")
-      .data([data], function(d) {
-        return d.ser1
-      });
+       var line = d3.line()
+         .x(function(d) {
+           return xScale(d.ser1);
+         }) // set the x values for the line generator
+         .y(function(d) {
+           return yScale(d.ser2);
+         }) // set the y values for the line generator
 
-    // Updata the line
-    u
-      .enter()
-      .append("path")
-      .attr("class", "lineTest")
-      .merge(u)
-      .transition()
-      .duration(3000)
-      .attr("d", d3.line()
-        .x(function(d) {
-          return x(d.ser1);
-        })
-        .y(function(d) {
-          return y(d.ser2);
-        }))
-      .attr("fill", "none")
-      .attr("stroke", "steelblue")
-      .attr("stroke-width", 2.5)
+       let svg = d3.select("#graph").transition().duration(750);
 
-  }
-},
+       // Make the changes
+       svg.select(".line") // change the line
+         .duration(750)
+         .attr("d", line(data));
 
+       svg.select(".x.axis") // change the x axis
+         .duration(750)
+         .call(d3.axisBottom(xScale));
+
+       svg.select(".y.axis") // change the y axis
+         .duration(750)
+         .call(d3.axisLeft(yScale));
+
+       d3.select("svg").selectAll(".dot")
+         .data(data)
+         .transition()
+         .duration(750)
+         .attr("cx", function(d) {
+           return xScale(d.ser1)
+         })
+         .attr("cy", function(d) {
+           return yScale(d.ser2)
+         })
+
+     },
+     createSvg(data) {
+       var width = 460 - this.margin.left - this.margin.right;
+       var height = 400 - this.margin.top - this.margin.bottom;
+
+       var xScale = d3.scaleLinear()
+         .domain([0, Math.max.apply(Math, data.map(x => x.ser1))])
+         .range([0, width]);
+
+       var yScale = d3.scaleLinear()
+         .domain([0, Math.max.apply(Math, data.map(x => x.ser2))])
+         .range([height, 0]);
+
+       // 7. d3's line generator
+       var line = d3.line()
+         .x(function(d) {
+           return xScale(d.ser1);
+         }) // set the x values for the line generator
+         .y(function(d) {
+           return yScale(d.ser2);
+         }) // set the y values for the line generator
+
+       // 1. Add the SVG to the page and employ #2
+       var svg = d3.select("#graph").append("svg")
+         .attr("width", width + this.margin.left + this.margin.right)
+         .attr("height", height + this.margin.top + this.margin.bottom)
+         .attr("fill", "blue")
+         .append("g")
+         .attr("transform", "translate(" + this.margin.left + "," + this.margin.top + ")");
+
+
+       // 3. Call the x axis in a group tag
+       this.xAxis = svg.append("g")
+         .attr("class", "x axis")
+         .attr("transform", "translate(0," + height + ")")
+         .call(d3.axisBottom(xScale)); // Create an axis component with d3.axisBottom
+
+       this.yAxis = svg.append("g")
+         .attr("class", "y axis")
+         .call(d3.axisLeft(yScale));
+
+       svg.append("path")
+         .datum(data)
+         .attr("class", "line")
+         .attr("d", line);
+
+       svg.selectAll(".dot")
+         .data(data)
+         .enter().append("circle")
+         .attr("class", "dot")
+         .attr("cx", function(d, i) {
+           return xScale(d.ser1)
+         })
+         .attr("cy", function(d) {
+           return yScale(d.ser2)
+         })
+         .attr("r", 5);
+     }
+   },
+   mounted() {
+     this.createSvg(this.data1);
+   },
   computed: {
     // Typical projection for showing all states scaled and positioned appropriately
     projection () {
@@ -287,7 +384,8 @@ createSvg() {
     cityData(){
       return this.cityJson ? this.cityJson.features.map(feature1 =>{
         return {
-          feature1
+          feature1,
+          color: this.cityColor(this.compute)
         }
       }):[]
     },
@@ -295,6 +393,25 @@ createSvg() {
     stateColor () {
       return d3.scaleSequential().domain([50, 1]).interpolator(d3.interpolateRdYlGn)
     },
+    cityColor(){
+      return d3.scaleSequential().domain([50000, 1]).interpolator(d3.interpolateRdYlGn)
+    },
+    compute(){
+      return this.xyz ? this.xyz.map(lk => {
+        let c=lk['1999']
+        //let state = this.happiestStates.find(state => state.state === feature.id)
+        return {
+          c
+        }
+      }):[]
+    }
+  /*  compute(){
+      let a=[];
+      for(k = 0; k < this.xyz.length; k++){
+      a=this.xyz[k]['1999']
+    }
+    return a
+  }*/
   },
   // On creation, get the GeoJSON
 
