@@ -46,6 +46,7 @@ var app = new Vue({
     options: ["1999-00","2000-01","2001-02","2002-03","2003-04","2004-05","2005-06","2006-07","2007-08","2008-09"],
     stateId:null,
     IndexId:null,
+    x:null,
     opened:[],
     data1: [{
         ser1: 0.3,
@@ -96,6 +97,9 @@ var app = new Vue({
     }
     },
     mouseoverState:function(index2){
+      this.selectedState=index2;
+      this.axiosCall();
+      console.log(this.selectedState)
       this.set1=index2;
       console.log(this.set1);
         let tooltip = document.getElementById("tooltip");
@@ -107,8 +111,8 @@ var app = new Vue({
         tooltip.style.display = "block";
         tooltip3.style.display = "block";
     },
-    mouseoverDistrict:function(IndexId){
-      this.set2 = IndexId;
+    mouseoverDistrict:function(Index){
+      this.set2 = Index;
       console.log(this.set2)
       for(let i=0; i<this.xyz.length; i++){
         if(this.set2===this.xyz[i].IndexId){
