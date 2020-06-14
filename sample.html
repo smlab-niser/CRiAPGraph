@@ -29,7 +29,7 @@
                 <path class="bar" v-for="(city, index1) in cityData" :d="projection1(city.feature1)" :style="{
          fill: city.color,
          stroke: 'darkslategray'
-       }" @mouseover="updateCity(index1,city);updateData(data2);findCommonElement(index1, city)">
+       }" @mouseover="updateCity(index1,city);findCommonElement(index1, city);filterData()">
                 </path>
             </svg>
         </div>
@@ -121,19 +121,23 @@
 </div>
 
 
-        <div id="my_dataviz" style="background-color:lightblue; width:50%;"></div>
-
+<div id="lineChart">
+      <text>State GDP</text><line-chart :data="getStateData().newStateData[selectedState]" :max="getMax(getStateData().newStateData[selectedState])" :curve="true" :library="{animation: {duration: 1000}}" :download="{background: '#eee'}" :discrete="false" :round="4" xtitle="Year" ytitle="GDP(in Crore INR)" label="GDP" width="600px" height="300px"></line-chart>
+      <span>District GDP</span><line-chart :data="getDistrictData().newDistrictData[selectedCity]" :max="getMax(getDistrictData().newDistrictData[selectedCity])" :curve="true" :library="{animation: {duration: 1000}}" :download="{background: '#300'}" xtitle="Year" ytitle="GDP(in Crore INR)" label="GDP" width="600px" height="300px"></line-chart>
+</div>
     </div>
 
-
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.5.17/vue.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.2/axios.min.js"></script>
     <script src="https://d3js.org/d3.v5.min.js"></script>
-
     <script src="https://d3js.org/d3.v5.js"></script>
-    <script src="sample2.js"></script>
 
+
+            <script src="https://unpkg.com/chart.js@2.8.0/dist/Chart.bundle.min.js"></script>
+            <script src="https://www.gstatic.com/charts/loader.js"></script>
+            <script src="https://unpkg.com/vue-chartkick@0.6.0"></script>
+    <script src="sample2.js"></script>
 
 
 </body>
