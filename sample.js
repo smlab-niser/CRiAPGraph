@@ -46,7 +46,9 @@ var app = new Vue({
     options: ["1999-00","2000-01","2001-02","2002-03","2003-04","2004-05","2005-06","2006-07","2007-08","2008-09"],
     stateId:null,
     IndexId:null,
-    x:null,
+    x:'1999-00',
+    startTime: "1999-00",
+endTime: "2008-09",
     opened:[],
     data1: [{
         ser1: 0.3,
@@ -76,9 +78,120 @@ var app = new Vue({
     ],
     margin: {top: 50, right: 50, bottom: 50, left: 50},
     xAxis:null,
-    yAxis:null
+    yAxis:null,
+    max:null
   }},
   methods:{
+    updateData(data) {
+
+          var width = 460 - this.margin.left - this.margin.right;
+          var height = 400 - this.margin.top - this.margin.bottom;
+
+
+          var xScale = d3.scaleLinear()
+            .domain([0, Math.max.apply(Math, data.map(x => x.ser1))])
+            .range([0, width]);
+
+          var yScale = d3.scaleLinear()
+            .domain([0, Math.max.apply(Math, data.map(x => x.ser2))])
+            .range([height, 0]);
+
+
+          // Select the section we want to apply our changes to
+
+
+          var line = d3.line()
+            .x(function(d) {
+              return xScale(d.ser1);
+            }) // set the x values for the line generator
+            .y(function(d) {
+              return yScale(d.ser2);
+            }) // set the y values for the line generator
+
+          let svg = d3.select("#graph").transition().duration(750);
+
+          // Make the changes
+          svg.select(".line") // change the line
+            .duration(750)
+            .attr("d", line(data));
+
+          svg.select(".x.axis") // change the x axis
+            .duration(750)
+            .call(d3.axisBottom(xScale));
+
+          svg.select(".y.axis") // change the y axis
+            .duration(750)
+            .call(d3.axisLeft(yScale));
+
+          d3.select("svg").selectAll(".dot")
+            .data(data)
+            .transition()
+            .duration(750)
+            .attr("cx", function(d) {
+              return xScale(d.ser1)
+            })
+            .attr("cy", function(d) {
+              return yScale(d.ser2)
+            })
+
+        },
+        createSvg(data) {
+          var width = 460 - this.margin.left - this.margin.right;
+          var height = 400 - this.margin.top - this.margin.bottom;
+
+          var xScale = d3.scaleLinear()
+            .domain([0, Math.max.apply(Math, data.map(x => x.ser1))])
+            .range([0, width]);
+
+          var yScale = d3.scaleLinear()
+            .domain([0, Math.max.apply(Math, data.map(x => x.ser2))])
+            .range([height, 0]);
+
+          // 7. d3's line generator
+          var line = d3.line()
+            .x(function(d) {
+              return xScale(d.ser1);
+            }) // set the x values for the line generator
+            .y(function(d) {
+              return yScale(d.ser2);
+            }) // set the y values for the line generator
+
+          // 1. Add the SVG to the page and employ #2
+          var svg = d3.select("#graph").append("svg")
+            .attr("width", width + this.margin.left + this.margin.right)
+            .attr("height", height + this.margin.top + this.margin.bottom)
+            .attr("fill", "blue")
+            .append("g")
+            .attr("transform", "translate(" + this.margin.left + "," + this.margin.top + ")");
+
+
+          // 3. Call the x axis in a group tag
+          this.xAxis = svg.append("g")
+            .attr("class", "x axis")
+            .attr("transform", "translate(0," + height + ")")
+            .call(d3.axisBottom(xScale)); // Create an axis component with d3.axisBottom
+
+          this.yAxis = svg.append("g")
+            .attr("class", "y axis")
+            .call(d3.axisLeft(yScale));
+
+          svg.append("path")
+            .datum(data)
+            .attr("class", "line")
+            .attr("d", line);
+
+          svg.selectAll(".dot")
+            .data(data)
+            .enter().append("circle")
+            .attr("class", "dot")
+            .attr("cx", function(d, i) {
+              return xScale(d.ser1)
+            })
+            .attr("cy", function(d) {
+              return yScale(d.ser2)
+            })
+            .attr("r", 5);
+        },
     toggle:function(Id) {
       this.stateId=Id
       for(let i=0; i<this.xyz.length; i++){
@@ -112,6 +225,8 @@ var app = new Vue({
         tooltip3.style.display = "block";
     },
     mouseoverDistrict:function(Index){
+      this.selectedCity=Index;
+      this.axiosCall();
       this.set2 = Index;
       console.log(this.set2)
       for(let i=0; i<this.xyz.length; i++){
@@ -131,6 +246,7 @@ var app = new Vue({
    },
     updateState:function(index, evt)
     {
+      console.log('key',Object.keys(this.stateGDP[this.selectedState]).filter(key => isNaN(key) || (key>="1999-00" && key<="2008-09")))
       this.selectedState = index;
       this.axiosCall();
     //  return this.statesJson.features[this.selectedState].id
@@ -162,8 +278,8 @@ var app = new Vue({
     axiosCall() {
    axios.all([axios.get('https://raw.githubusercontent.com/smlab-niser/CRiAPGraph/master/states.json?token=AOYHVJ2BNIP7L3TMOE66JWK6ZKBRK'),
            axios.get(this.webURL[this.selectedState].URL),
-           axios.get('https://sheet.best/api/sheets/27a9daa8-d989-4a30-bdbd-23269e6b61e6/tabs/GDP'),
-           axios.get('https://sheet.best/api/sheets/27a9daa8-d989-4a30-bdbd-23269e6b61e6/tabs/GDP of Indian States 1980-2020')])
+           axios.get('https://sheet.best/api/sheets/2e8f7b95-eb85-496a-a661-2bba64615f67/tabs/GDP'),
+           axios.get('https://sheet.best/api/sheets/2e8f7b95-eb85-496a-a661-2bba64615f67/tabs/GDP of Indian States 1980-2020')])
   .then(axios.spread((user1,user2,user3,user4) => (
     console.log(user1.data),
     console.log(this.selectedState),
@@ -226,119 +342,39 @@ selected: function (event) {
    this.selectedIndex = this.age
    console.log('this is selected Index ' + this.selectedIndex)
  },
- updateData(data) {
 
-       var width = 460 - this.margin.left - this.margin.right;
-       var height = 400 - this.margin.top - this.margin.bottom;
+ isDate(key) {
+     return /\d{4}\-\d{2}/.test(key);
+ },
+ filterData(stateData, startDate, endDate) {
+     return stateData.map(state => {
+         let entries = Object.entries(state).filter(([key, val]) => this.isDate(key) && (key >= startDate && key <= endDate ) && Boolean(Number(val)))
+         return Object.fromEntries(entries);
+     });
+ },
 
-
-       var xScale = d3.scaleLinear()
-         .domain([0, Math.max.apply(Math, data.map(x => x.ser1))])
-         .range([0, width]);
-
-       var yScale = d3.scaleLinear()
-         .domain([0, Math.max.apply(Math, data.map(x => x.ser2))])
-         .range([height, 0]);
-
-
-       // Select the section we want to apply our changes to
-
-
-       var line = d3.line()
-         .x(function(d) {
-           return xScale(d.ser1);
-         }) // set the x values for the line generator
-         .y(function(d) {
-           return yScale(d.ser2);
-         }) // set the y values for the line generator
-
-       let svg = d3.select("#graph").transition().duration(750);
-
-       // Make the changes
-       svg.select(".line") // change the line
-         .duration(750)
-         .attr("d", line(data));
-
-       svg.select(".x.axis") // change the x axis
-         .duration(750)
-         .call(d3.axisBottom(xScale));
-
-       svg.select(".y.axis") // change the y axis
-         .duration(750)
-         .call(d3.axisLeft(yScale));
-
-       d3.select("svg").selectAll(".dot")
-         .data(data)
-         .transition()
-         .duration(750)
-         .attr("cx", function(d) {
-           return xScale(d.ser1)
-         })
-         .attr("cy", function(d) {
-           return yScale(d.ser2)
-         })
-
-     },
-     createSvg(data) {
-       var width = 460 - this.margin.left - this.margin.right;
-       var height = 400 - this.margin.top - this.margin.bottom;
-
-       var xScale = d3.scaleLinear()
-         .domain([0, Math.max.apply(Math, data.map(x => x.ser1))])
-         .range([0, width]);
-
-       var yScale = d3.scaleLinear()
-         .domain([0, Math.max.apply(Math, data.map(x => x.ser2))])
-         .range([height, 0]);
-
-       // 7. d3's line generator
-       var line = d3.line()
-         .x(function(d) {
-           return xScale(d.ser1);
-         }) // set the x values for the line generator
-         .y(function(d) {
-           return yScale(d.ser2);
-         }) // set the y values for the line generator
-
-       // 1. Add the SVG to the page and employ #2
-       var svg = d3.select("#graph").append("svg")
-         .attr("width", width + this.margin.left + this.margin.right)
-         .attr("height", height + this.margin.top + this.margin.bottom)
-         .attr("fill", "blue")
-         .append("g")
-         .attr("transform", "translate(" + this.margin.left + "," + this.margin.top + ")");
-
-
-       // 3. Call the x axis in a group tag
-       this.xAxis = svg.append("g")
-         .attr("class", "x axis")
-         .attr("transform", "translate(0," + height + ")")
-         .call(d3.axisBottom(xScale)); // Create an axis component with d3.axisBottom
-
-       this.yAxis = svg.append("g")
-         .attr("class", "y axis")
-         .call(d3.axisLeft(yScale));
-
-       svg.append("path")
-         .datum(data)
-         .attr("class", "line")
-         .attr("d", line);
-
-       svg.selectAll(".dot")
-         .data(data)
-         .enter().append("circle")
-         .attr("class", "dot")
-         .attr("cx", function(d, i) {
-           return xScale(d.ser1)
-         })
-         .attr("cy", function(d) {
-           return yScale(d.ser2)
-         })
-         .attr("r", 5);
+ getStateData() {
+     return {
+         stateData: this.stateGDP,
+         newStateData: this.filterData(this.stateGDP, this.startTime, this.endTime)
      }
-   },
+ },
+ getDistrictData(){
+   return {
+     DistrictData: this.xyz,
+     newDistrictData: this.filterData(this.xyz, this.startTime, this.endTime)
+   }
+ },
+ getMax(stateData) {
+    let values = Object.values(stateData);
+    return [...values.sort((a,b)=>a-b)].pop();
+}
+},
    mounted() {
      this.createSvg(this.data1);
+     setTimeout(() => {
+       this.max = 25000
+     }, 2000)
    },
   computed: {
     // Typical projection for showing all states scaled and positioned appropriately
