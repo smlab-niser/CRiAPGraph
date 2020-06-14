@@ -3,11 +3,15 @@ var app = new Vue({
   el: "#app",
   data(){
     return {
-    webURL:[{URL:"https://raw.githubusercontent.com/smlab-niser/CRiAPGraph/master/districts/Andhra%20Pradesh.json"},
+    webURL:[{URL:"https://raw.githubusercontent.com/smlab-niser/CRiAPGraph/master/districts/A%26N.json"},
+            {URL:"https://raw.githubusercontent.com/smlab-niser/CRiAPGraph/master/districts/Andhra%20Pradesh.json"},
             {URL:"https://raw.githubusercontent.com/smlab-niser/CRiAPGraph/master/districts/Arunachal%20Pradesh.json"},
             {URL:"https://raw.githubusercontent.com/smlab-niser/CRiAPGraph/master/districts/Assam.json"},
             {URL:"https://raw.githubusercontent.com/smlab-niser/CRiAPGraph/master/districts/Bihar.json"},
+            {URL:"https://raw.githubusercontent.com/smlab-niser/CRiAPGraph/master/districts/Chandigarh.json"},
             {URL:"https://raw.githubusercontent.com/smlab-niser/CRiAPGraph/master/districts/Chhattisgarh.json"},
+            {URL:"https://raw.githubusercontent.com/smlab-niser/CRiAPGraph/master/districts/Dadra%20and%20Nagar%20Haveli.json"},
+            {URL:"https://raw.githubusercontent.com/smlab-niser/CRiAPGraph/master/districts/Daman%20and%20Diu.json"},
             {URL:"https://raw.githubusercontent.com/smlab-niser/CRiAPGraph/master/districts/Delhi.json"},
             {URL:"https://raw.githubusercontent.com/smlab-niser/CRiAPGraph/master/districts/Goa.json"},
             {URL:"https://raw.githubusercontent.com/smlab-niser/CRiAPGraph/master/districts/Gujarat.json"},
@@ -17,6 +21,7 @@ var app = new Vue({
             {URL:"https://raw.githubusercontent.com/smlab-niser/CRiAPGraph/master/districts/Jharkhand.json"},
             {URL:"https://raw.githubusercontent.com/smlab-niser/CRiAPGraph/master/districts/Karnataka.json"},
             {URL:"https://raw.githubusercontent.com/smlab-niser/CRiAPGraph/master/districts/Kerala.json"},
+            {URL:"https://raw.githubusercontent.com/smlab-niser/CRiAPGraph/master/districts/Lakshadweep.json"},
             {URL:"https://raw.githubusercontent.com/smlab-niser/CRiAPGraph/master/districts/Madhya%20Pradesh.json"},
             {URL:"https://raw.githubusercontent.com/smlab-niser/CRiAPGraph/master/districts/Maharashtra.json"},
             {URL:"https://raw.githubusercontent.com/smlab-niser/CRiAPGraph/master/districts/Manipur.json"},
@@ -24,10 +29,12 @@ var app = new Vue({
             {URL:"https://raw.githubusercontent.com/smlab-niser/CRiAPGraph/master/districts/Mizoram.json"},
             {URL:"https://raw.githubusercontent.com/smlab-niser/CRiAPGraph/master/districts/Nagaland.json"},
             {URL:"https://raw.githubusercontent.com/smlab-niser/CRiAPGraph/master/districts/Orissa.json"},
+            {URL:"https://raw.githubusercontent.com/smlab-niser/CRiAPGraph/master/districts/Puducherry.json"},
             {URL:"https://raw.githubusercontent.com/smlab-niser/CRiAPGraph/master/districts/Punjab.json"},
             {URL:"https://raw.githubusercontent.com/smlab-niser/CRiAPGraph/master/districts/Rajasthan.json"},
             {URL:"https://raw.githubusercontent.com/smlab-niser/CRiAPGraph/master/districts/Sikkim.json"},
             {URL:"https://raw.githubusercontent.com/smlab-niser/CRiAPGraph/master/districts/Tamil%20Nadu.json"},
+            {URL:"https://raw.githubusercontent.com/smlab-niser/CRiAPGraph/master/districts/Telangana.json"},
             {URL:"https://raw.githubusercontent.com/smlab-niser/CRiAPGraph/master/districts/Tripura.json"},
             {URL:"https://raw.githubusercontent.com/smlab-niser/CRiAPGraph/master/districts/Uttar%20Pradesh.json"},
             {URL:"https://raw.githubusercontent.com/smlab-niser/CRiAPGraph/master/districts/Uttaranchal.json"},
@@ -48,7 +55,7 @@ var app = new Vue({
     IndexId:null,
     x:'1999-00',
     startTime: "1999-00",
-endTime: "2008-09",
+    endTime: "2008-09",
     opened:[],
     data1: [{
         ser1: 0.3,
@@ -212,9 +219,7 @@ endTime: "2008-09",
     mouseoverState:function(index2){
       this.selectedState=index2;
       this.axiosCall();
-      console.log(this.selectedState)
       this.set1=index2;
-      console.log(this.set1);
         let tooltip = document.getElementById("tooltip");
         let tooltip3 = document.getElementById("tooltip3");
         tooltip2.style.display = "none";
@@ -228,7 +233,6 @@ endTime: "2008-09",
       this.selectedCity=Index;
       this.axiosCall();
       this.set2 = Index;
-      console.log(this.set2)
       for(let i=0; i<this.xyz.length; i++){
         if(this.set2===this.xyz[i].IndexId){
       let tooltip1 = document.getElementById("tooltip1");
@@ -246,12 +250,9 @@ endTime: "2008-09",
    },
     updateState:function(index, evt)
     {
-      console.log('key',Object.keys(this.stateGDP[this.selectedState]).filter(key => isNaN(key) || (key>="1999-00" && key<="2008-09")))
       this.selectedState = index;
       this.axiosCall();
     //  return this.statesJson.features[this.selectedState].id
-      console.log(this.selectedState)
-      console.log(this.statesJson.features[this.selectedState].id)
     //   return innerHTML = `<div class="tooltip">
     //   <span class="tooltiptext">${this.statesJson.features[this.selectedState].id}</span>
     // </div>`
@@ -269,23 +270,18 @@ endTime: "2008-09",
       tooltip.style.left = evt.pageX + 10 + 'px';
       tooltip.style.top = evt.pageY + 10 + 'px';
     };
-    showTooltip(evt, this.statesJson.features[this.selectedState].id, this.stateGDP[this.selectedState][this.age])
+    showTooltip(evt, this.statesJson.features[this.selectedState].NAME_1, this.stateGDP[this.selectedState][this.age])
   },
      hideTooltip:function() {
       var tooltip = document.getElementById("tooltip1");
       tooltip.style.display = "none";
     },
     axiosCall() {
-   axios.all([axios.get('https://raw.githubusercontent.com/smlab-niser/CRiAPGraph/master/states.json?token=AOYHVJ2BNIP7L3TMOE66JWK6ZKBRK'),
+   axios.all([axios.get('https://raw.githubusercontent.com/smlab-niser/CRiAPGraph/master/India.json'),
            axios.get(this.webURL[this.selectedState].URL),
            axios.get('https://sheet.best/api/sheets/2e8f7b95-eb85-496a-a661-2bba64615f67/tabs/GDP'),
            axios.get('https://sheet.best/api/sheets/2e8f7b95-eb85-496a-a661-2bba64615f67/tabs/GDP of Indian States 1980-2020')])
   .then(axios.spread((user1,user2,user3,user4) => (
-    console.log(user1.data),
-    console.log(this.selectedState),
-    console.log(user2.data),
-    console.log('selected',this.selected),
-    console.log('user4',this.stateGDP),
     this.statesJson=user1.data,
     this.cityJson=user2.data,
     this.xyz=user3.data,
@@ -297,9 +293,6 @@ endTime: "2008-09",
 },
 updateCity:function(index1, evt){
   this.selectedCity=index1
-  console.log(this.selectedCity)
-  console.log('sheet=',this.compute)
-  console.log('city=',this.cityJson.features[this.selectedCity].properties.NAME_2)
   function showTooltip1(evt, text) {
     console.log("i am evebt", evt);
     console.log('text',text)
@@ -340,7 +333,6 @@ selected: function (event) {
    tooltip3.innerHTML = this.stateGDP[0][this.age];
    tooltip.style.display = "block";
    this.selectedIndex = this.age
-   console.log('this is selected Index ' + this.selectedIndex)
  },
 
  isDate(key) {
@@ -425,7 +417,7 @@ selected: function (event) {
       return this.cityJson ? this.cityJson.features.map(feature1 =>{
         return {
           feature1,
-          color: this.cityColor(this.compute)
+          color: this.cityColor()
         }
       }):[]
     },
@@ -436,15 +428,7 @@ selected: function (event) {
     cityColor(){
       return d3.scaleSequential().domain([50000, 1]).interpolator(d3.interpolateRdYlGn)
     },
-    compute(){
-      return this.xyz ? this.xyz.map(lk => {
-        let c=lk['1999']
-        //let state = this.happiestStates.find(state => state.state === feature.id)
-        return {
-          c
-        }
-      }):[]
-    }
+
   /*  compute(){
       let a=[];
       for(k = 0; k < this.xyz.length; k++){
