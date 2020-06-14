@@ -32,7 +32,11 @@
     color: indianred;
     font-size: 25px;
 }
-
+#lineChart{
+  position: absolute;
+  top: 1200px;
+  left:0px;
+}
 .bar:hover {
     fill: #ec008c;
     opacity: 0.6;
@@ -265,4 +269,14 @@ td.text-right {
     padding: 0 4px !important;
     background-color: #eeeeee;
     font-size: 13px;
+}
+.line {
+  fill: none;
+  stroke: steelblue;
+  stroke-width: 3;
+}
+
+.dot {
+  fill: steelblue;
+  stroke: #fff;
 }
